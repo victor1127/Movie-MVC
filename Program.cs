@@ -17,8 +17,15 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.AddTransient<SeedService>();
 
 var app = builder.Build();
+
+using(var scop = app.Services.CreateScope())
+{
+    var seedService = scop.ServiceProvider.GetService<SeedService>();
+    await seedService.SeedDataAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
